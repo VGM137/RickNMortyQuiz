@@ -1,0 +1,14 @@
+{
+  "name": "juego",
+  "version": "1.0.0",
+  "description": "Trivia sobre Rick & Morty",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "author": "Victor Garza",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "1.2.1"
+  }
+}
