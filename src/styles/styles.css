@@ -6,16 +6,22 @@ body{
 .btn{
   height: fit-content;
   width: fit-content;
+  margin: 20px auto;
   padding: 10px;
   border-radius: 30px;
   font-size: 1.5em;
+  color: #f2ff00;
+  background-color: #16acc9;
+  box-shadow: 0px 0px 10px 10px #d2da4b;
 }
 .btnJugar{
   margin: auto;
-  color: #f2ff00;
-  background-color: #16acc9;
   border: 2px solid black;
-  box-shadow: 0px 0px 10px 10px #d2da4b;
+}
+.btnSiguiente{
+ font-size: 1em;
+ margin: 30px;
+ margin-right: 0;
 }
 .Main{
   background-color: #94d8da;
@@ -27,7 +33,7 @@ body{
   align-items: center;
   display: flex;
 }
-.Home{
+.home{
   width: 100vw;
   height: auto;
   align-items: center;
@@ -41,4 +47,29 @@ body{
 .homeImg{
   width: 80%;
   margin: auto;
+}
+.chooseLevel{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  align-items: center;
+}
+.questionContainer{
+  width: 80%;
+  margin: auto;
+}
+.imageContainer{
+  display: flex;
+  width: fit-content;
+  margin: auto;
+}
+.optionsContainer{
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 50% 50%;
+}
+.btnContainer{
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 10px;
 }
