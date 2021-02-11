@@ -13,10 +13,10 @@ body{
   color: #f2ff00;
   background-color: #16acc9;
   box-shadow: 0px 0px 10px 10px #d2da4b;
+/*   border: 1.5px ; */
 }
 .btnJugar{
   margin: auto;
-  border: 2px solid black;
 }
 .btnSiguiente{
  font-size: 1em;

@@ -3,6 +3,7 @@ import getCount from '../utils/getCount.js'
 
 let allCharacters = []
 let allPages = []
+
 let levelOneCharacters = []
   let quizOneCharacters = []
 let levelTwoCharacters = []
@@ -51,9 +52,9 @@ class Juego{
   level1(){
     this.randomCharacter(10, levelOneCharacters)
     this.easyButton.onclick = () => ''
-    let difficulty = 10 + 1
+    this.difficulty = 10 + 1
     do{
-      let number = Math.floor(Math.random() * (difficulty - 1) ) + 1
+      let number = Math.floor(Math.random() * (this.difficulty - 1) ) + 1
         levelOneCharacters.map(function(character){
           let char = character.id
           let charIndex = levelOneCharacters.indexOf(character)
@@ -63,14 +64,14 @@ class Juego{
           }
         }) 
     }while(levelOneCharacters.length > 0)
-      this.start(quizOneCharacters)
+      this.start(quizOneCharacters, this.difficulty)
   }
   level2(){
     this.randomCharacter(15, levelTwoCharacters)
     this.easyButton.onclick = () => ''
-    let difficulty = 15 + 1
+    this.difficulty = 15 + 1
     do{
-      let number = Math.floor(Math.random() * (difficulty - 1) ) + 1
+      let number = Math.floor(Math.random() * (this.difficulty - 1) ) + 1
         levelTwoCharacters.map(function(character){
           let char = character.id
           let charIndex = levelTwoCharacters.indexOf(character)
@@ -80,13 +81,13 @@ class Juego{
           }
         }) 
     }while(levelTwoCharacters.length > 0)
-      this.start(quizTwoCharacters)
+      this.start(quizTwoCharacters, this.difficulty)
   }
   level3(){
     this.randomCharacter(this.count, levelThreeCharacters)
     console.log(this.count)
     this.easyButton.onclick = () => ''
-    let difficulty = 20 + 1
+    this.difficulty = 20 + 1
     do{
       let number = Math.floor(Math.random() * (this.count - 1) ) + 1
         levelThreeCharacters.map(function(character){
@@ -98,20 +99,22 @@ class Juego{
           }
         }) 
     }while(quizThreeCharacters.length < 20)
-      this.start(quizThreeCharacters)
+      this.start(quizThreeCharacters, this.difficulty)
   }
-  start(array){
-    this.pregunta(array)
+  start(array, difficulty){
+    console.log(this.arrayCopy)
+    this.question(array, difficulty)
   }
-  pregunta(array){
+  question(array, difficulty){
     if(array.length <= 0){
-      return
+      this.nextQuestion.disabled = true
     }
     let preguntas = array
     let el = preguntas.shift()
-    this.view(el, preguntas)
+    this.view(el, preguntas, difficulty)
   }
-  view(el, array){
+  view(el, array, difficulty){
+    let questions = difficulty
     content.innerHTML = `
     <section id="questioContainer" class="questionContainer">
     <h2>¿Quién es este personaje?</h2>
@@ -122,15 +125,30 @@ class Juego{
     ${this.options}
     </div>
     <div id="btnContainer" class="btnContainer">
-    <button id="siguiente" class="btnSiguiente btn" >Siguiente</button>
+    <button id="nextQuestion" class="btnSiguiente btn" >Siguiente</button>
     </div>
     </section>
     `
     this.options = this.displayOptions(el)
-    this.add = this.addRightAnswer(el)
-    this.siguiente = document.getElementById('siguiente')
-    this.siguiente.disabled = true
-    this.siguiente.onclick = () => this.pregunta(array)
+    this.add = this.addAnswers(el, questions)
+    this.nextQuestion = document.getElementById('nextQuestion')
+    this.nextQuestion.disabled = true
+    this.nextQuestion.onclick = async () => {
+      this.container = document.getElementById('optionsContainer')
+      this.nodes = this.container.children
+/*       this.nodesArray = [] */
+      for(let i = 0; i < this.nodes.length; i++){
+        let node = this.nodes[i]
+        if(node.value == 'true'){
+          if(node.innerHTML == node.title){
+            console.log('Right Answer')
+          }else{
+            console.log('Wrong Answer')
+          }
+        }
+      }
+      await this.question(array, questions)
+    }
     this.optionOne = document.getElementById('optionOne')
     this.optionTwo = document.getElementById('optionTwo')
     this.optionThree = document.getElementById('optionThree')
@@ -143,17 +161,38 @@ class Juego{
   displayOptions(){
     this.container = document.getElementById('optionsContainer')
     this.container.innerHTML = `
-    <button id="optionOne" class="optionOne" value='false'>Opción Uno</button>
-    <button id="optionTwo" class="optionTwo" value='false'>Opción Dos</button>
-    <button id="optionThree" class="optionThree" value='false'>Opción Tres</button>
-    <button id="optionFour" class="optionFour" value='false'>Opción cuatro</button>
+    <button id="optionOne" class="optionOne" value='false'></button>
+    <button id="optionTwo" class="optionTwo" value='false'></button>
+    <button id="optionThree" class="optionThree" value='false'></button>
+    <button id="optionFour" class="optionFour" value='false'></button>
     `
   }
-  addRightAnswer(el){
+  async addAnswers(el, difficulty){
     let number = Math.floor(Math.random() * (4 - 1) ) + 1
     this.container = document.getElementById('optionsContainer')
     this.nodes = this.container.children
-    this.nodes[number].title = el.name
+    this.nodesArray = []
+    for(let i = 0; i < this.nodes.length; i++){
+      let node = this.nodes[i]
+      this.nodesArray.push(node)
+    }
+    let rightAns = this.nodesArray.indexOf(this.nodesArray[number])
+    let answer =  this.nodesArray.splice(rightAns, 1)
+    let rightAnswer = answer[0]
+    rightAnswer.title = el.name
+    rightAnswer.innerHTML = el.name
+    let rightAnswerName = rightAnswer.innerHTML
+    let wrongAnswers = this.nodesArray 
+    let questionChars = allCharacters.slice(0, (difficulty-1))
+    wrongAnswers.forEach(function(ans){
+      do{
+        let number = Math.floor(Math.random() * ((difficulty-1) - 1) ) + 1
+        let char = questionChars[number]
+        if(char.name !== rightAnswerName && char.name !== wrongAnswers[0].innerHTML && char.name !== wrongAnswers[1].innerHTML && char.name !== wrongAnswers[2].innerHTML){
+          ans.innerHTML = char.name
+        }
+      }while(ans.innerHTML == '')
+    })
   }
   handleOption(button, el){
     this.container = document.getElementById('optionsContainer')
@@ -173,8 +212,10 @@ class Juego{
     }else if(button.value == 'true'){
       button.value = 'false'
     }
-    if(button.title === el.name){
-      console.log('Respuesta Correcta!!')
+    if(this.nodesArray[0].value == 'true' || this.nodesArray[1].value == 'true' || this.nodesArray[2].value == 'true' || this.nodesArray[3].value == 'true'){
+      this.nextQuestion.disabled = false
+    }else{
+      this.nextQuestion.disabled = true
     }
   }
 
